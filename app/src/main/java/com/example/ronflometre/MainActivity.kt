@@ -9,8 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.ronflometre.navigation.BarreDuBas
+import com.example.ronflometre.navigation.NavGraph
+import com.example.ronflometre.navigation.Routes
 import com.example.ronflometre.ui.theme.RonflometreTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +25,26 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RonflometreTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                // un seul navController, partagé par la barre du bas et le NavGraph
+                val navController = rememberNavController()
+                val entreeActuelle by navController.currentBackStackEntryAsState()
+                val routeActuelle = entreeActuelle?.destination?.route
+
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        // pas de barre pendant la nuit
+                        if (routeActuelle != Routes.NUIT) {
+                            BarreDuBas(navController)
+                        }
+                    }
+                ) { innerPadding ->
+                    NavGraph(
+                        navController = navController,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RonflometreTheme {
-        Greeting("Android")
     }
 }
