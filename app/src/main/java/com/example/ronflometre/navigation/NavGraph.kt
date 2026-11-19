@@ -51,7 +51,6 @@ fun NavGraph(
 
         composable(
             route = Routes.NUIT,
-            // le type de chaque argument de la route
             arguments = listOf(
                 navArgument("heure") { type = NavType.IntType },
                 navArgument("minute") { type = NavType.IntType },
@@ -69,10 +68,12 @@ fun NavGraph(
                 heure = heure,
                 minute = minute,
                 mode = mode,
-                // Arrêter : la nuit est enregistrée, on affiche son bilan dans le Journal
-                onArrete = {
+                // Arrêter : la nuit est enregistrée, go to Journal
+                onArreter = {
                     navController.navigate(Routes.JOURNAL) {
-                        popUpTo(Routes.SOMMEIL)
+                        popUpTo(Routes.SOMMEIL) {
+                            inclusive = true
+                        }
                     }
                 }
             )
