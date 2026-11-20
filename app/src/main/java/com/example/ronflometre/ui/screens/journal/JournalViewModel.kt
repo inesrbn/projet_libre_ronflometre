@@ -30,6 +30,16 @@ data class JournalUiState(
     // temps total de ronflement
     val dureeRonflementMs: Long get() = ronflements.sumOf { it.dureeMs }
 
+    // qualité de la nuit en % : 100 moins 2 points par minute de ronflement et par heure de nuit
+    // ex. 30 min de ronflement sur 7 h → 100 - (30 / 7 × 2) ≈ 91 %
+    val qualite: Int
+        get() {
+            val heures = dureeNuitMs / 3_600_000.0
+            if (heures <= 0) return 100
+            val minutesRonflement = dureeRonflementMs / 60_000.0
+            return (100 - minutesRonflement / heures * 2).toInt().coerceIn(0, 100)
+        }
+
     // nombre de ronflements par heure de nuit
     val tauxParHeure: Double
         get() {
