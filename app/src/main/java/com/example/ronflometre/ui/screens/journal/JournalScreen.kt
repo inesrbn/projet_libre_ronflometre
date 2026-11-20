@@ -28,6 +28,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ronflometre.data.Evenement
 import com.example.ronflometre.data.Nuit
+import com.example.ronflometre.ui.components.CercleQualite
+import com.example.ronflometre.ui.components.CourbeNuit
 import com.example.ronflometre.ui.theme.RonflometreTheme
 import java.time.Instant
 import java.time.ZoneId
@@ -86,6 +88,12 @@ fun JournalContenu(uiState: JournalUiState, onCreerDemo: () -> Unit) {
                 Text("Journal", style = MaterialTheme.typography.headlineMedium)
                 Text(date(nuit.debut), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
+            // le cercle de qualité, en haut au centre
+            item {
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    CercleQualite(qualite = uiState.qualite)
+                }
+            }
             // les cartes du bilan, 2 par ligne
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -104,6 +112,19 @@ fun JournalContenu(uiState: JournalUiState, onCreerDemo: () -> Unit) {
                     CarteBilan("Taux", "%.1f / h".format(uiState.tauxParHeure), Modifier.weight(1f))
                     CarteBilan("Sons détectés", "${uiState.evenements.size}", Modifier.weight(1f))
                 }
+            }
+            // la courbe : chaque son placé à son heure, hauteur = volume
+            item {
+                Spacer(Modifier.height(8.dp))
+                Text("La nuit en un coup d'œil", style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.height(8.dp))
+                CourbeNuit(
+                    debut = nuit.debut,
+                    fin = nuit.fin ?: nuit.debut,
+                    evenements = uiState.evenements,
+                    heureDebut = heure(nuit.debut),
+                    heureFin = nuit.fin?.let { heure(it) } ?: ""
+                )
             }
             // la liste horodatée
             item {
