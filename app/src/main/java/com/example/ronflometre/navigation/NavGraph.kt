@@ -7,8 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.ronflometre.ui.screens.JournalScreen
-import com.example.ronflometre.ui.screens.NuitScreen
+import com.example.ronflometre.ui.screens.journal.JournalScreen
+import com.example.ronflometre.ui.screens.nuit.NuitScreen
 import com.example.ronflometre.ui.screens.ProfilScreen
 import com.example.ronflometre.ui.screens.StatistiquesScreen
 import com.example.ronflometre.ui.screens.sommeil.ModeAlarme
@@ -51,7 +51,6 @@ fun NavGraph(
 
         composable(
             route = Routes.NUIT,
-            // le type de chaque argument de la route
             arguments = listOf(
                 navArgument("heure") { type = NavType.IntType },
                 navArgument("minute") { type = NavType.IntType },
@@ -69,8 +68,14 @@ fun NavGraph(
                 heure = heure,
                 minute = minute,
                 mode = mode,
-                // Arrêter revient à l'écran précédent (Sommeil)
-                onArreter = { navController.popBackStack() }
+                // Arrêter : la nuit est enregistrée, go to Journal
+                onArreter = {
+                    navController.navigate(Routes.JOURNAL) {
+                        popUpTo(Routes.SOMMEIL) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
     }
