@@ -8,7 +8,5 @@ import androidx.room.PrimaryKey
 data class Nuit(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val debut: Long,                  // heure de début
-    val fin: Long? = null,            // null tant que la nuit n'est pas terminée
-    val heureAlarme: Int? = null,     // en minutes, null si pas d'alarme
-    val mode: String = "FIXE"         // FENETRE, FIXE ou AUCUNE
+    val fin: Long? = null             // null tant que la nuit n'est pas terminée
 )

@@ -9,8 +9,8 @@ class NuitRepository(context: Context) {
     private val dao = RonflometreDatabase.getInstance(context).nuitDao()
 
     // Démarrer : crée la nuit et renvoie son id
-    suspend fun commencerNuit(heureAlarme: Int?, mode: String): Long =
-        dao.insererNuit(Nuit(debut = System.currentTimeMillis(), heureAlarme = heureAlarme, mode = mode))
+    suspend fun commencerNuit(): Long =
+        dao.insererNuit(Nuit(debut = System.currentTimeMillis()))
 
     // Arrêter : enregistre l'heure de fin
     suspend fun terminerNuit(nuitId: Long) =
@@ -33,7 +33,7 @@ class NuitRepository(context: Context) {
         val maintenant = System.currentTimeMillis()
         val fin = maintenant - 60_000L
         val debut = fin - (7.5 * 60 * 60 * 1000).toLong()
-        val nuitId = dao.insererNuit(Nuit(debut = debut, heureAlarme = 7 * 60, mode = "FIXE"))
+        val nuitId = dao.insererNuit(Nuit(debut = debut))
         val evenements = List(25) {
             val estRonflement = Random.nextInt(100) < 70
             Evenement(

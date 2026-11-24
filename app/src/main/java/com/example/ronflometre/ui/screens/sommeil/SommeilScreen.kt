@@ -12,13 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ronflometre.ui.components.ChoixMode
-import com.example.ronflometre.ui.components.SelecteurHeure
 import com.example.ronflometre.ui.theme.RonflometreTheme
 
+// Écran Sommeil : un seul bouton pour commencer la nuit
 @Composable
-fun SommeilScreen(modifier: Modifier = Modifier, onDemarrer: (heure: Int, minute: Int, mode: ModeAlarme) -> Unit, viewModel: SommeilViewModel = viewModel()) {
+fun SommeilScreen(modifier: Modifier = Modifier, onDemarrer: () -> Unit) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -26,31 +24,12 @@ fun SommeilScreen(modifier: Modifier = Modifier, onDemarrer: (heure: Int, minute
     ) {
         Text(text = "Sommeil")
         Spacer(Modifier.height(24.dp))
-
-        SelecteurHeure(
-            heure = viewModel.heure,
-            minute = viewModel.minute,
-            onHeurePlus = { viewModel.augmenterHeure() },
-            onHeureMoins = { viewModel.diminuerHeure() },
-            onMinutePlus = { viewModel.augmenterMinute() },
-            onMinuteMoins = { viewModel.diminuerMinute() }
-        )
-
-        ChoixMode(
-            heure = viewModel.heure,
-            minute = viewModel.minute,
-            modeInitial = viewModel.mode,
-            onModeChoisi = { viewModel.choisirMode(it) }
-        )
-
-        Spacer(Modifier.height(24.dp))
-
-        Button(onClick = { onDemarrer(viewModel.heure, viewModel.minute, viewModel.mode) }) { Text("Démarrer") }
+        Button(onClick = onDemarrer) { Text("Démarrer") }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun SommeilScreenPreview() {
-    RonflometreTheme { SommeilScreen(onDemarrer = { _, _, _ -> }) }
+    RonflometreTheme { SommeilScreen(onDemarrer = {}) }
 }
