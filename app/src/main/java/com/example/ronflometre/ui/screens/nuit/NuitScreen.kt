@@ -54,15 +54,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ronflometre.ui.screens.sommeil.ModeAlarme
 import com.example.ronflometre.ui.theme.RonflometreTheme
 
 // Écran de la nuit en cours avec écoute du micro et volume en direct
 @Composable
 fun NuitScreen(
-    heure: Int,
-    minute: Int,
-    mode: ModeAlarme,
     onArreter: () -> Unit,
     viewModel: NuitViewModel = viewModel()
 ) {
@@ -113,7 +109,7 @@ fun NuitScreen(
 
     // À l'ouverture : création de la nuit dans Room + demande initiale de permission
     LaunchedEffect(Unit) {
-        viewModel.commencer(heure, minute, mode)
+        viewModel.commencer()
         if (aLaPermission) {
             viewModel.demarrerEcoute()
         } else {
@@ -137,9 +133,6 @@ fun NuitScreen(
     }
 
     NuitContenu(
-        heure = heure,
-        minute = minute,
-        mode = mode,
         aLaPermission = aLaPermission,
         estEnEcoute = estEnEcoute,
         volumeDb = volumeDb,
@@ -150,21 +143,12 @@ fun NuitScreen(
 
 @Composable
 fun NuitContenu(
-    heure: Int,
-    minute: Int,
-    mode: ModeAlarme,
     aLaPermission: Boolean,
     estEnEcoute: Boolean,
     volumeDb: Float,
     onDemanderPermission: () -> Unit,
     onArreter: () -> Unit
 ) {
-    val heureTexte = "%02d:%02d".format(heure, minute)
-    val texteAlarme = when (mode) {
-        ModeAlarme.FENETRE -> "Réveil autour de $heureTexte"
-        ModeAlarme.FIXE -> "Alarme à $heureTexte"
-        ModeAlarme.AUCUNE -> "Pas d'alarme"
-    }
 
     val progressionCible = (volumeDb / 90f).coerceIn(0f, 1f)
     val progressionAnimee by animateFloatAsState(
@@ -196,12 +180,6 @@ fun NuitContenu(
                 text = "Bonne nuit",
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = texteAlarme,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -336,9 +314,6 @@ fun NuitContenu(
 fun NuitScreenPreview() {
     RonflometreTheme {
         NuitContenu(
-            heure = 7,
-            minute = 30,
-            mode = ModeAlarme.FIXE,
             aLaPermission = true,
             estEnEcoute = true,
             volumeDb = 45f,

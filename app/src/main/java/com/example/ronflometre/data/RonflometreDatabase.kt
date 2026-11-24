@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 // La base de données de l'appli
-@Database(entities = [Nuit::class, Evenement::class], version = 1, exportSchema = false)
+@Database(entities = [Nuit::class, Evenement::class], version = 2, exportSchema = false)
 abstract class RonflometreDatabase : RoomDatabase() {
 
     abstract fun nuitDao(): NuitDao
@@ -22,7 +22,10 @@ abstract class RonflometreDatabase : RoomDatabase() {
                     context.applicationContext,
                     RonflometreDatabase::class.java,
                     "ronflometre.db"
-                ).build().also { instance = it }
+                )
+                    // si la structure de la base change, on repart d'une base vide
+                    .fallbackToDestructiveMigration(dropAllTables = true)
+                    .build().also { instance = it }
             }
     }
 }

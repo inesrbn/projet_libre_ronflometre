@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ronflometre.audio.AudioRecorder
 import com.example.ronflometre.data.NuitRepository
-import com.example.ronflometre.ui.screens.sommeil.ModeAlarme
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -25,11 +24,10 @@ class NuitViewModel(application: Application) : AndroidViewModel(application) {
     // la création de la nuit
     private var creation: Job? = null
 
-    fun commencer(heure: Int, minute: Int, mode: ModeAlarme) {
+    fun commencer() {
         if (creation != null) return     // déjà commencée
-        val heureAlarme = if (mode == ModeAlarme.AUCUNE) null else heure * 60 + minute
         creation = viewModelScope.launch {
-            nuitId = repository.commencerNuit(heureAlarme, mode.name)
+            nuitId = repository.commencerNuit()
         }
     }
 
